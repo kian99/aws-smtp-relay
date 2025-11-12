@@ -4,7 +4,7 @@ FROM alpine:latest
 # Install ca-certificates for HTTPS
 RUN apk --no-cache add ca-certificates
 
-# GoReleaser v2 automatically organizes binaries by platform
+# GoReleaser v2 organizes binaries in $TARGETPLATFORM/ (e.g., linux/amd64/)
 ARG TARGETPLATFORM
 COPY ${TARGETPLATFORM}/aws-smtp-relay /bin/aws-smtp-relay
 

@@ -9,3 +9,4 @@
 !go.sum
 !aws-smtp-relay
 !dist/
+!linux/
