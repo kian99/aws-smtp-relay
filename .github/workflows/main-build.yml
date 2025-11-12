@@ -1,0 +1,173 @@
+name: Build Main Branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-main:
+    name: Build and Push Main Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run GoReleaser (Snapshot)
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --snapshot --clean --skip=validate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build binaries
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/aws-smtp-relay-linux-amd64
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/aws-smtp-relay-linux-arm64
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -o dist/aws-smtp-relay-linux-armv7
+
+      - name: Build and push Docker images (Distroless)
+        run: |
+          # AMD64
+          docker buildx build --platform linux/amd64 \
+            --file Dockerfile \
+            --tag kamorion/aws-smtp-relay:main-amd64 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-amd64 \
+            --build-arg BINARY=dist/aws-smtp-relay-linux-amd64 \
+            --push \
+            -f - . <<'EOF'
+          FROM gcr.io/distroless/static-debian12:nonroot
+          ARG BINARY
+          COPY ${BINARY} /bin/aws-smtp-relay
+          ENTRYPOINT ["/bin/aws-smtp-relay"]
+          EOF
+
+          # ARM64
+          docker buildx build --platform linux/arm64 \
+            --file Dockerfile \
+            --tag kamorion/aws-smtp-relay:main-arm64v8 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-arm64v8 \
+            --build-arg BINARY=dist/aws-smtp-relay-linux-arm64 \
+            --push \
+            -f - . <<'EOF'
+          FROM gcr.io/distroless/static-debian12:nonroot
+          ARG BINARY
+          COPY ${BINARY} /bin/aws-smtp-relay
+          ENTRYPOINT ["/bin/aws-smtp-relay"]
+          EOF
+
+          # ARMv7
+          docker buildx build --platform linux/arm/v7 \
+            --file Dockerfile \
+            --tag kamorion/aws-smtp-relay:main-armv7 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-armv7 \
+            --build-arg BINARY=dist/aws-smtp-relay-linux-armv7 \
+            --push \
+            -f - . <<'EOF'
+          FROM gcr.io/distroless/static-debian12:nonroot
+          ARG BINARY
+          COPY ${BINARY} /bin/aws-smtp-relay
+          ENTRYPOINT ["/bin/aws-smtp-relay"]
+          EOF
+
+      - name: Build and push Docker images (Alpine)
+        run: |
+          # AMD64 Alpine
+          docker buildx build --platform linux/amd64 \
+            --tag kamorion/aws-smtp-relay:main-alpine-amd64 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-amd64 \
+            --build-arg BINARY=dist/aws-smtp-relay-linux-amd64 \
+            --push \
+            -f - . <<'EOF'
+          FROM alpine:latest
+          RUN apk --no-cache add ca-certificates
+          ARG BINARY
+          COPY ${BINARY} /bin/aws-smtp-relay
+          USER 65534
+          ENTRYPOINT ["/bin/aws-smtp-relay"]
+          EOF
+
+          # ARM64 Alpine
+          docker buildx build --platform linux/arm64 \
+            --tag kamorion/aws-smtp-relay:main-alpine-arm64v8 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-arm64v8 \
+            --build-arg BINARY=dist/aws-smtp-relay-linux-arm64 \
+            --push \
+            -f - . <<'EOF'
+          FROM alpine:latest
+          RUN apk --no-cache add ca-certificates
+          ARG BINARY
+          COPY ${BINARY} /bin/aws-smtp-relay
+          USER 65534
+          ENTRYPOINT ["/bin/aws-smtp-relay"]
+          EOF
+
+          # ARMv7 Alpine
+          docker buildx build --platform linux/arm/v7 \
+            --tag kamorion/aws-smtp-relay:main-alpine-armv7 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-armv7 \
+            --build-arg BINARY=dist/aws-smtp-relay-linux-armv7 \
+            --push \
+            -f - . <<'EOF'
+          FROM alpine:latest
+          RUN apk --no-cache add ca-certificates
+          ARG BINARY
+          COPY ${BINARY} /bin/aws-smtp-relay
+          USER 65534
+          ENTRYPOINT ["/bin/aws-smtp-relay"]
+          EOF
+
+      - name: Create Docker manifests (Distroless)
+        run: |
+          docker buildx imagetools create -t kamorion/aws-smtp-relay:main \
+            kamorion/aws-smtp-relay:main-amd64 \
+            kamorion/aws-smtp-relay:main-arm64v8 \
+            kamorion/aws-smtp-relay:main-armv7
+
+          docker buildx imagetools create -t ghcr.io/kamorionlabs/aws-smtp-relay:main \
+            ghcr.io/kamorionlabs/aws-smtp-relay:main-amd64 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:main-arm64v8 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:main-armv7
+
+      - name: Create Docker manifests (Alpine)
+        run: |
+          docker buildx imagetools create -t kamorion/aws-smtp-relay:main-alpine \
+            kamorion/aws-smtp-relay:main-alpine-amd64 \
+            kamorion/aws-smtp-relay:main-alpine-arm64v8 \
+            kamorion/aws-smtp-relay:main-alpine-armv7
+
+          docker buildx imagetools create -t ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine \
+            ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-amd64 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-arm64v8 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-armv7

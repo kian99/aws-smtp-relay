@@ -13,10 +13,17 @@ Amazon SES and Pinpoint SMTP interfaces require credentials, but using **IAM rol
 ## 🚀 Quick Start
 
 ```bash
+# Production (Distroless - recommended)
 docker run -d \
   -p 1025:1025 \
   -e AWS_REGION=eu-west-1 \
-  kamorion/aws-smtp-relay
+  kamorion/aws-smtp-relay:latest
+
+# Debug (Alpine - with shell)
+docker run -d \
+  -p 1025:1025 \
+  -e AWS_REGION=eu-west-1 \
+  kamorion/aws-smtp-relay:latest-alpine
 ```
 
 ## 📦 Multi-Architecture Support
@@ -24,6 +31,25 @@ docker run -d \
 This image supports:
 - `linux/amd64` (x86_64)
 - `linux/arm64` (ARM64/aarch64)
+- `linux/arm/v7` (ARMv7)
+
+## 🏷️ Available Tags
+
+**Production (Distroless - Recommended)**
+- `latest` - Latest stable release
+- `v1.2.3`, `v1.2`, `v1` - Specific versions
+- `main` - Latest commit from main branch (unstable)
+
+**Debug (Alpine - With Shell)**
+- `latest-alpine` - Latest stable release with shell
+- `v1.2.3-alpine` - Specific version with shell
+- `main-alpine` - Latest main branch with shell
+
+**Notes:**
+- **Distroless**: Minimal, secure (no shell, ~2MB)
+- **Alpine**: Debug-friendly, includes shell (~7MB)
+- `latest` = last stable release
+- `main` = unstable, for testing only
 
 ## 🔐 IAM Permissions Required
 
