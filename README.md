@@ -199,7 +199,7 @@ aws-smtp-relay -i 127.0.0.1,::1
 
 > To authorize their IP, clients must use a supported SMTP authentication
 > mechanism, e.g. `LOGIN` or `PLAIN` via [TLS](#tls) or `CRAM-MD5` on
-> unencrypted connections.  
+> unencrypted connections.
 > This is required even if no user authentication is configured on the server,
 > although in this case the credentials can be chosen freely by the client.
 
@@ -223,7 +223,7 @@ openssl req -new -x509 -config tls/openssl.conf -days 24855 \
 **Please note**:
 
 > Encrypted key files are only supported if they contain a `DEK-Info` header,
-> stating the encryption method used.  
+> stating the encryption method used.
 > The `openssl req` command does not create this header if encryption is
 > enabled, which is why we pipe the unencrypted key output to the `openssl rsa`
 > command, which outputs an encrypted key file with the required `DEK-Info`
@@ -283,6 +283,18 @@ Available ARN options:
 - `-p` : Amazon SES ReturnPathArn
 
 If only SourceArn (`-o`) is provided, it will automatically be used for FromArn and ReturnPathArn unless explicitly overridden.
+
+### SESv2 API ARN Mapping
+
+This relay uses the **Amazon SES v2 API** which maps ARN parameters as follows:
+
+- **FromArn** or **SourceArn** → [`FromEmailAddressIdentityArn`](https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html#API_SendEmail_RequestSyntax)
+  Used for sending authorization when the identity owner has granted you permission to send on their behalf.
+
+- **ReturnPathArn** → [`FeedbackForwardingEmailAddressIdentityArn`](https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html#API_SendEmail_RequestSyntax)
+  Used for bounce and complaint notifications. The ARN of the identity associated with the feedback forwarding address.
+
+For more information about SESv2 sending authorization, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html).
 
 See [AWS SES Cross-Account Sending](https://docs.aws.amazon.com/ses/latest/dg/sending-authorization.html) for more details.
 

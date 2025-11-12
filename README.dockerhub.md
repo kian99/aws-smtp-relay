@@ -68,6 +68,8 @@ docker run -d \
 
 ### Cross-Account SES Authorization
 
+Uses **Amazon SES v2 API** for cross-account authorization:
+
 ```bash
 docker run -d \
   -p 1025:1025 \
@@ -75,6 +77,12 @@ docker run -d \
   kamorion/aws-smtp-relay \
   -o arn:aws:ses:region:account-id:identity/example.com
 ```
+
+**ARN Mapping (SESv2):**
+- `-f` / `-o` → `FromEmailAddressIdentityArn` (sending authorization)
+- `-p` → `FeedbackForwardingEmailAddressIdentityArn` (bounce/complaint notifications)
+
+See [SESv2 SendEmail API Reference](https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html)
 
 ## 🔒 Security Options
 
@@ -112,9 +120,9 @@ docker run -d \
 | `-i` | Allowed client IPs | - |
 | `-l` | Allowed sender emails regex | - |
 | `-d` | Denied recipient emails regex | - |
-| `-o` | Amazon SES SourceArn | - |
-| `-f` | Amazon SES FromArn | - |
-| `-p` | Amazon SES ReturnPathArn | - |
+| `-o` | Amazon SES SourceArn (→ SESv2 FromEmailAddressIdentityArn) | - |
+| `-f` | Amazon SES FromArn (→ SESv2 FromEmailAddressIdentityArn) | - |
+| `-p` | Amazon SES ReturnPathArn (→ SESv2 FeedbackForwardingEmailAddressIdentityArn) | - |
 | `-s` | Require TLS via STARTTLS | `false` |
 | `-t` | TLS connections only | `false` |
 | `-c` | TLS cert file | - |
