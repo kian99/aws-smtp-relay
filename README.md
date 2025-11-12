@@ -87,8 +87,8 @@ docker pull kamorion/aws-smtp-relay:v1.2.3          # Specific version
 docker pull kamorion/aws-smtp-relay:v1.2            # Latest patch of v1.2
 docker pull kamorion/aws-smtp-relay:v1              # Latest minor of v1
 
-# Unstable (from main branch)
-docker pull kamorion/aws-smtp-relay:main            # Latest commit from main branch
+# Development (from main branch)
+docker pull kamorion/aws-smtp-relay:edge            # Latest commit from main branch
 ```
 
 **Debug (Alpine - With Shell)**
@@ -100,14 +100,14 @@ Images based on Alpine Linux, includes shell and basic debugging tools:
 docker pull kamorion/aws-smtp-relay:latest-alpine   # Latest stable release
 docker pull kamorion/aws-smtp-relay:v1.2.3-alpine   # Specific version
 
-# Unstable (from main branch)
-docker pull kamorion/aws-smtp-relay:main-alpine     # Latest commit from main branch
+# Development (from main branch)
+docker pull kamorion/aws-smtp-relay:edge-alpine     # Latest commit from main branch
 ```
 
 **Notes:**
 - All tags are available on both Docker Hub (`kamorion/`) and GHCR (`ghcr.io/kamorionlabs/`)
 - `latest` tag = last stable release (tagged with `v*`)
-- `main` tag = latest commit on main branch (unstable, for testing)
+- `edge` tag = latest commit on main branch (bleeding edge, for testing)
 - Use **distroless** images for production (smaller, more secure)
 - Use **alpine** images for debugging (includes shell access)
 
@@ -126,11 +126,11 @@ docker run -d \
   -e AWS_REGION=eu-west-1 \
   kamorion/aws-smtp-relay:latest-alpine
 
-# Test latest main branch
+# Test bleeding edge
 docker run -d \
   -p 1025:1025 \
   -e AWS_REGION=eu-west-1 \
-  kamorion/aws-smtp-relay:main
+  kamorion/aws-smtp-relay:edge
 ```
 
 ## Installation

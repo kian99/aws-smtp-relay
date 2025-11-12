@@ -1,4 +1,4 @@
-name: Build Main Branch
+name: Build Edge Images
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build-main:
-    name: Build and Push Main Images
+  build-edge:
+    name: Build and Push Edge Images
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -62,8 +62,8 @@ jobs:
           # AMD64
           docker buildx build --platform linux/amd64 \
             --file Dockerfile \
-            --tag kamorion/aws-smtp-relay:main-amd64 \
-            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-amd64 \
+            --tag kamorion/aws-smtp-relay:edge-amd64 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:edge-amd64 \
             --build-arg BINARY=dist/aws-smtp-relay-linux-amd64 \
             --push \
             -f - . <<'EOF'
@@ -76,8 +76,8 @@ jobs:
           # ARM64
           docker buildx build --platform linux/arm64 \
             --file Dockerfile \
-            --tag kamorion/aws-smtp-relay:main-arm64v8 \
-            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-arm64v8 \
+            --tag kamorion/aws-smtp-relay:edge-arm64v8 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:edge-arm64v8 \
             --build-arg BINARY=dist/aws-smtp-relay-linux-arm64 \
             --push \
             -f - . <<'EOF'
@@ -90,8 +90,8 @@ jobs:
           # ARMv7
           docker buildx build --platform linux/arm/v7 \
             --file Dockerfile \
-            --tag kamorion/aws-smtp-relay:main-armv7 \
-            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-armv7 \
+            --tag kamorion/aws-smtp-relay:edge-armv7 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:edge-armv7 \
             --build-arg BINARY=dist/aws-smtp-relay-linux-armv7 \
             --push \
             -f - . <<'EOF'
@@ -105,8 +105,8 @@ jobs:
         run: |
           # AMD64 Alpine
           docker buildx build --platform linux/amd64 \
-            --tag kamorion/aws-smtp-relay:main-alpine-amd64 \
-            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-amd64 \
+            --tag kamorion/aws-smtp-relay:edge-alpine-amd64 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine-amd64 \
             --build-arg BINARY=dist/aws-smtp-relay-linux-amd64 \
             --push \
             -f - . <<'EOF'
@@ -120,8 +120,8 @@ jobs:
 
           # ARM64 Alpine
           docker buildx build --platform linux/arm64 \
-            --tag kamorion/aws-smtp-relay:main-alpine-arm64v8 \
-            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-arm64v8 \
+            --tag kamorion/aws-smtp-relay:edge-alpine-arm64v8 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine-arm64v8 \
             --build-arg BINARY=dist/aws-smtp-relay-linux-arm64 \
             --push \
             -f - . <<'EOF'
@@ -135,8 +135,8 @@ jobs:
 
           # ARMv7 Alpine
           docker buildx build --platform linux/arm/v7 \
-            --tag kamorion/aws-smtp-relay:main-alpine-armv7 \
-            --tag ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-armv7 \
+            --tag kamorion/aws-smtp-relay:edge-alpine-armv7 \
+            --tag ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine-armv7 \
             --build-arg BINARY=dist/aws-smtp-relay-linux-armv7 \
             --push \
             -f - . <<'EOF'
@@ -150,24 +150,24 @@ jobs:
 
       - name: Create Docker manifests (Distroless)
         run: |
-          docker buildx imagetools create -t kamorion/aws-smtp-relay:main \
-            kamorion/aws-smtp-relay:main-amd64 \
-            kamorion/aws-smtp-relay:main-arm64v8 \
-            kamorion/aws-smtp-relay:main-armv7
+          docker buildx imagetools create -t kamorion/aws-smtp-relay:edge \
+            kamorion/aws-smtp-relay:edge-amd64 \
+            kamorion/aws-smtp-relay:edge-arm64v8 \
+            kamorion/aws-smtp-relay:edge-armv7
 
-          docker buildx imagetools create -t ghcr.io/kamorionlabs/aws-smtp-relay:main \
-            ghcr.io/kamorionlabs/aws-smtp-relay:main-amd64 \
-            ghcr.io/kamorionlabs/aws-smtp-relay:main-arm64v8 \
-            ghcr.io/kamorionlabs/aws-smtp-relay:main-armv7
+          docker buildx imagetools create -t ghcr.io/kamorionlabs/aws-smtp-relay:edge \
+            ghcr.io/kamorionlabs/aws-smtp-relay:edge-amd64 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:edge-arm64v8 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:edge-armv7
 
       - name: Create Docker manifests (Alpine)
         run: |
-          docker buildx imagetools create -t kamorion/aws-smtp-relay:main-alpine \
-            kamorion/aws-smtp-relay:main-alpine-amd64 \
-            kamorion/aws-smtp-relay:main-alpine-arm64v8 \
-            kamorion/aws-smtp-relay:main-alpine-armv7
+          docker buildx imagetools create -t kamorion/aws-smtp-relay:edge-alpine \
+            kamorion/aws-smtp-relay:edge-alpine-amd64 \
+            kamorion/aws-smtp-relay:edge-alpine-arm64v8 \
+            kamorion/aws-smtp-relay:edge-alpine-armv7
 
-          docker buildx imagetools create -t ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine \
-            ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-amd64 \
-            ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-arm64v8 \
-            ghcr.io/kamorionlabs/aws-smtp-relay:main-alpine-armv7
+          docker buildx imagetools create -t ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine \
+            ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine-amd64 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine-arm64v8 \
+            ghcr.io/kamorionlabs/aws-smtp-relay:edge-alpine-armv7

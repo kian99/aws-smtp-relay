@@ -38,18 +38,18 @@ This image supports:
 **Production (Distroless - Recommended)**
 - `latest` - Latest stable release
 - `v1.2.3`, `v1.2`, `v1` - Specific versions
-- `main` - Latest commit from main branch (unstable)
+- `edge` - Latest commit from main branch (bleeding edge)
 
 **Debug (Alpine - With Shell)**
 - `latest-alpine` - Latest stable release with shell
 - `v1.2.3-alpine` - Specific version with shell
-- `main-alpine` - Latest main branch with shell
+- `edge-alpine` - Latest main branch with shell
 
 **Notes:**
 - **Distroless**: Minimal, secure (no shell, ~2MB)
 - **Alpine**: Debug-friendly, includes shell (~7MB)
 - `latest` = last stable release
-- `main` = unstable, for testing only
+- `edge` = bleeding edge, for testing only
 
 ## 🔐 IAM Permissions Required
 
