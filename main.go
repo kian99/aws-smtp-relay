@@ -8,30 +8,30 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/blueimp/aws-smtp-relay/internal/auth"
-	"github.com/blueimp/aws-smtp-relay/internal/relay"
-	pinpointrelay "github.com/blueimp/aws-smtp-relay/internal/relay/pinpoint"
-	sesrelay "github.com/blueimp/aws-smtp-relay/internal/relay/ses"
+	"github.com/KamorionLabs/aws-smtp-relay/internal/auth"
+	"github.com/KamorionLabs/aws-smtp-relay/internal/relay"
+	pinpointrelay "github.com/KamorionLabs/aws-smtp-relay/internal/relay/pinpoint"
+	sesrelay "github.com/KamorionLabs/aws-smtp-relay/internal/relay/ses"
 	"github.com/mhale/smtpd"
 )
 
 var (
-	addr           = flag.String("a", ":1025", "TCP listen address")
-	name           = flag.String("n", "AWS SMTP Relay", "SMTP service name")
-	host           = flag.String("h", "", "Server hostname")
-	certFile       = flag.String("c", "", "TLS cert file")
-	keyFile        = flag.String("k", "", "TLS key file")
-	startTLS       = flag.Bool("s", false, "Require TLS via STARTTLS extension")
-	onlyTLS        = flag.Bool("t", false, "Listen for incoming TLS connections only")
-	relayAPI       = flag.String("r", "ses", "Relay API to use (ses|pinpoint)")
-	setName        = flag.String("e", "", "Amazon SES Configuration Set Name")
-	ips            = flag.String("i", "", "Allowed client IPs (comma-separated)")
-	user           = flag.String("u", "", "Authentication username")
-	allowFrom      = flag.String("l", "", "Allowed sender emails regular expression")
-	denyTo         = flag.String("d", "", "Denied recipient emails regular expression")
-	sourceArn      = flag.String("o", "", "Amazon SES SourceArn")
-	fromArn        = flag.String("f", "", "Amazon SES FromArn")
-	returnPathArn  = flag.String("p", "", "Amazon SES ReturnPathArn")
+	addr          = flag.String("a", ":1025", "TCP listen address")
+	name          = flag.String("n", "AWS SMTP Relay", "SMTP service name")
+	host          = flag.String("h", "", "Server hostname")
+	certFile      = flag.String("c", "", "TLS cert file")
+	keyFile       = flag.String("k", "", "TLS key file")
+	startTLS      = flag.Bool("s", false, "Require TLS via STARTTLS extension")
+	onlyTLS       = flag.Bool("t", false, "Listen for incoming TLS connections only")
+	relayAPI      = flag.String("r", "ses", "Relay API to use (ses|pinpoint)")
+	setName       = flag.String("e", "", "Amazon SES Configuration Set Name")
+	ips           = flag.String("i", "", "Allowed client IPs (comma-separated)")
+	user          = flag.String("u", "", "Authentication username")
+	allowFrom     = flag.String("l", "", "Allowed sender emails regular expression")
+	denyTo        = flag.String("d", "", "Denied recipient emails regular expression")
+	sourceArn     = flag.String("o", "", "Amazon SES SourceArn")
+	fromArn       = flag.String("f", "", "Amazon SES FromArn")
+	returnPathArn = flag.String("p", "", "Amazon SES ReturnPathArn")
 )
 
 var ipMap map[string]bool
