@@ -4,10 +4,10 @@ import (
 	"net"
 	"regexp"
 
+	"github.com/KamorionLabs/aws-smtp-relay/internal/relay"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/pinpointemail"
 	"github.com/aws/aws-sdk-go/service/pinpointemail/pinpointemailiface"
-	"github.com/blueimp/aws-smtp-relay/internal/relay"
 )
 
 // Client implements the Relay interface.

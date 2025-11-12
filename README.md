@@ -2,6 +2,17 @@
 
 > SMTP server to relay emails via Amazon SES or Amazon Pinpoint using IAM roles.
 
+## ⚠️ Fork Notice
+
+This repository is a maintained fork of [blueimp/aws-smtp-relay](https://github.com/blueimp/aws-smtp-relay), which appears to be inactive. This fork includes:
+
+- **Active maintenance** and support for pending pull requests
+- **Cross-account SES authorization** support via ARN parameters
+- **Multi-architecture Docker images** (amd64, arm64)
+- **Dual registry publishing** to Docker Hub and GitHub Container Registry
+
+Pull requests and contributions are welcome!
+
 **Contents**
 
 - [Background](#background)
@@ -59,20 +70,26 @@ that relays emails via SES or Pinpoint API using IAM roles.
 This repository provides a sample [Dockerfile](Dockerfile) to build and run the
 project in a container environment.
 
-A prebuilt Docker image is also available on
-[Docker Hub](https://hub.docker.com/r/blueimp/aws-smtp-relay/):
+Prebuilt multi-architecture Docker images (amd64, arm64) are available on:
+
+- **Docker Hub**: [kamorion/aws-smtp-relay](https://hub.docker.com/r/kamorion/aws-smtp-relay/)
+- **GitHub Container Registry**: `ghcr.io/kamorionlabs/aws-smtp-relay`
 
 ```sh
-docker run blueimp/aws-smtp-relay --help
+# Using Docker Hub
+docker run kamorion/aws-smtp-relay --help
+
+# Using GitHub Container Registry
+docker run ghcr.io/kamorionlabs/aws-smtp-relay --help
 ```
 
 ## Installation
 
 The `aws-smtp-relay` binary can be installed from source via
-[go get](https://golang.org/cmd/go/):
+[go install](https://golang.org/cmd/go/):
 
 ```sh
-go get github.com/blueimp/aws-smtp-relay
+go install github.com/KamorionLabs/aws-smtp-relay@latest
 ```
 
 ## Usage
@@ -251,6 +268,24 @@ aws-smtp-relay -d 'admin@example\.org$'
 
 By default, all recipient email addresses are allowed.
 
+### Cross-Account Authorization
+
+For cross-account SES authorization, you can specify Amazon Resource Names (ARNs):
+
+```sh
+aws-smtp-relay -o arn:aws:ses:region:account-id:identity/example.com
+```
+
+Available ARN options:
+
+- `-o` : Amazon SES SourceArn (also used as default for FromArn and ReturnPathArn if not specified)
+- `-f` : Amazon SES FromArn
+- `-p` : Amazon SES ReturnPathArn
+
+If only SourceArn (`-o`) is provided, it will automatically be used for FromArn and ReturnPathArn unless explicitly overridden.
+
+See [AWS SES Cross-Account Sending](https://docs.aws.amazon.com/ses/latest/dg/sending-authorization.html) for more details.
+
 ### Region
 
 The `AWS_REGION` must be set to configure the AWS SDK, e.g. by executing the
@@ -304,7 +339,7 @@ to a `string` value:
 First, clone the project and then switch into its source directory:
 
 ```sh
-git clone https://github.com/blueimp/aws-smtp-relay.git
+git clone https://github.com/KamorionLabs/aws-smtp-relay.git
 cd aws-smtp-relay
 ```
 

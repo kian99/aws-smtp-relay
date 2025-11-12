@@ -22,6 +22,13 @@ var (
 	)
 )
 
+// ARNs holds Amazon Resource Names for cross-account authorization.
+type ARNs struct {
+	SourceArn     *string
+	FromArn       *string
+	ReturnPathArn *string
+}
+
 // Client provides an interface to send emails.
 type Client interface {
 	Send(
