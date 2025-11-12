@@ -16,28 +16,36 @@ import (
 )
 
 var (
-	addr      = flag.String("a", ":1025", "TCP listen address")
-	name      = flag.String("n", "AWS SMTP Relay", "SMTP service name")
-	host      = flag.String("h", "", "Server hostname")
-	certFile  = flag.String("c", "", "TLS cert file")
-	keyFile   = flag.String("k", "", "TLS key file")
-	startTLS  = flag.Bool("s", false, "Require TLS via STARTTLS extension")
-	onlyTLS   = flag.Bool("t", false, "Listen for incoming TLS connections only")
-	relayAPI  = flag.String("r", "ses", "Relay API to use (ses|pinpoint)")
-	setName   = flag.String("e", "", "Amazon SES Configuration Set Name")
-	ips       = flag.String("i", "", "Allowed client IPs (comma-separated)")
-	user      = flag.String("u", "", "Authentication username")
-	allowFrom = flag.String("l", "", "Allowed sender emails regular expression")
-	denyTo    = flag.String("d", "", "Denied recipient emails regular expression")
-	sourceArn = flag.String("f", "", "The SourceARN (when using with cross accounts) ")
-	fromArn   = flag.String("o", "", "The FromARN (when using with cross accounts)")
-	rPathArn  = flag.String("p", "", "The ReturnPathARN (when using with cross accounts)")
+	addr           = flag.String("a", ":1025", "TCP listen address")
+	name           = flag.String("n", "AWS SMTP Relay", "SMTP service name")
+	host           = flag.String("h", "", "Server hostname")
+	certFile       = flag.String("c", "", "TLS cert file")
+	keyFile        = flag.String("k", "", "TLS key file")
+	startTLS       = flag.Bool("s", false, "Require TLS via STARTTLS extension")
+	onlyTLS        = flag.Bool("t", false, "Listen for incoming TLS connections only")
+	relayAPI       = flag.String("r", "ses", "Relay API to use (ses|pinpoint)")
+	setName        = flag.String("e", "", "Amazon SES Configuration Set Name")
+	ips            = flag.String("i", "", "Allowed client IPs (comma-separated)")
+	user           = flag.String("u", "", "Authentication username")
+	allowFrom      = flag.String("l", "", "Allowed sender emails regular expression")
+	denyTo         = flag.String("d", "", "Denied recipient emails regular expression")
+	sourceArn      = flag.String("o", "", "Amazon SES SourceArn")
+	fromArn        = flag.String("f", "", "Amazon SES FromArn")
+	returnPathArn  = flag.String("p", "", "Amazon SES ReturnPathArn")
 )
 
 var ipMap map[string]bool
 var bcryptHash []byte
 var password []byte
 var relayClient relay.Client
+
+// toStringPtr returns nil for empty strings, otherwise returns a pointer to the string
+func toStringPtr(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
 
 func server() (srv *smtpd.Server, err error) {
 	authMechs := make(map[string]bool)
@@ -82,27 +90,29 @@ func configure() error {
 			return errors.New("Denied recipient emails: " + err.Error())
 		}
 	}
-	if *sourceArn != "" {
-		if *fromArn == "" {
-			fromArn = sourceArn
+	var arns *relay.ARNs
+	// Configure ARNs for cross-account authorization if any ARN is provided
+	if *sourceArn != "" || *fromArn != "" || *returnPathArn != "" {
+		arns = &relay.ARNs{
+			SourceArn:     toStringPtr(*sourceArn),
+			FromArn:       toStringPtr(*fromArn),
+			ReturnPathArn: toStringPtr(*returnPathArn),
 		}
-		if *rPathArn == "" {
-			rPathArn = sourceArn
+		// If SourceArn is provided, use it as default for FromArn and ReturnPathArn
+		if *sourceArn != "" {
+			if arns.FromArn == nil {
+				arns.FromArn = arns.SourceArn
+			}
+			if arns.ReturnPathArn == nil {
+				arns.ReturnPathArn = arns.SourceArn
+			}
 		}
-	} else {
-		sourceArn = nil
-	}
-	if *fromArn == "" {
-		fromArn = nil
-	}
-	if *rPathArn == "" {
-		rPathArn = nil
 	}
 	switch *relayAPI {
 	case "pinpoint":
 		relayClient = pinpointrelay.New(setName, allowFromRegExp, denyToRegExp)
 	case "ses":
-		relayClient = sesrelay.New(setName, allowFromRegExp, denyToRegExp, sourceArn, fromArn, rPathArn)
+		relayClient = sesrelay.New(setName, allowFromRegExp, denyToRegExp, arns)
 	default:
 		return errors.New("Invalid relay API: " + *relayAPI)
 	}
