@@ -3,7 +3,7 @@ package relay
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net"
 	"os"
 	"regexp"
@@ -40,8 +40,8 @@ func logHelper(addr net.Addr, from *string, to []*string, err error) (
 		outWriter.Close()
 		errWriter.Close()
 	}()
-	stdout, _ := ioutil.ReadAll(outReader)
-	stderr, _ := ioutil.ReadAll(errReader)
+	stdout, _ := io.ReadAll(outReader)
+	stderr, _ := io.ReadAll(errReader)
 	return stdout, stderr
 }
 

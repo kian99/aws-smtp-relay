@@ -2,7 +2,7 @@ package relay
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 	"net"
 	"os"
 	"regexp"
@@ -69,8 +69,8 @@ func sendHelper(
 		outWriter.Close()
 		errWriter.Close()
 	}()
-	stdout, _ := ioutil.ReadAll(outReader)
-	stderr, _ := ioutil.ReadAll(errReader)
+	stdout, _ := io.ReadAll(outReader)
+	stderr, _ := io.ReadAll(errReader)
 	return testData.input, stdout, stderr, sendErr
 }
 
