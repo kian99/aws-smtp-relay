@@ -67,30 +67,94 @@ that relays emails via SES or Pinpoint API using IAM roles.
 
 ## Docker
 
-This repository provides a sample [Dockerfile](Dockerfile) to build and run the
-project in a container environment.
+This repository provides [Dockerfile](Dockerfile) and [Dockerfile.alpine](Dockerfile.alpine) to build and run the project in a container environment.
 
-Prebuilt multi-architecture Docker images (amd64, arm64) are available on:
+Prebuilt multi-architecture Docker images (amd64, arm64, armv7) are available on both registries:
 
 - **Docker Hub**: [kamorion/aws-smtp-relay](https://hub.docker.com/r/kamorion/aws-smtp-relay/)
 - **GitHub Container Registry**: `ghcr.io/kamorionlabs/aws-smtp-relay`
 
-```sh
-# Using Docker Hub
-docker run kamorion/aws-smtp-relay --help
+### Available Image Tags
 
-# Using GitHub Container Registry
-docker run ghcr.io/kamorionlabs/aws-smtp-relay --help
+**Production (Distroless - Recommended)**
+
+Minimal, secure images based on Google's Distroless base (no shell, no package manager):
+
+```sh
+# Stable releases
+docker pull kamorion/aws-smtp-relay:latest          # Latest stable release
+docker pull kamorion/aws-smtp-relay:v1.2.3          # Specific version
+docker pull kamorion/aws-smtp-relay:v1.2            # Latest patch of v1.2
+docker pull kamorion/aws-smtp-relay:v1              # Latest minor of v1
+
+# Development (from main branch)
+docker pull kamorion/aws-smtp-relay:edge            # Latest commit from main branch
+```
+
+**Debug (Alpine - With Shell)**
+
+Images based on Alpine Linux, includes shell and basic debugging tools:
+
+```sh
+# Stable releases
+docker pull kamorion/aws-smtp-relay:latest-alpine   # Latest stable release
+docker pull kamorion/aws-smtp-relay:v1.2.3-alpine   # Specific version
+
+# Development (from main branch)
+docker pull kamorion/aws-smtp-relay:edge-alpine     # Latest commit from main branch
+```
+
+**Notes:**
+- All tags are available on both Docker Hub (`kamorion/`) and GHCR (`ghcr.io/kamorionlabs/`)
+- `latest` tag = last stable release (tagged with `v*`)
+- `edge` tag = latest commit on main branch (bleeding edge, for testing)
+- Use **distroless** images for production (smaller, more secure)
+- Use **alpine** images for debugging (includes shell access)
+
+### Quick Start
+
+```sh
+# Production (recommended)
+docker run -d \
+  -p 1025:1025 \
+  -e AWS_REGION=eu-west-1 \
+  kamorion/aws-smtp-relay:latest
+
+# Debug with shell access
+docker run -d \
+  -p 1025:1025 \
+  -e AWS_REGION=eu-west-1 \
+  kamorion/aws-smtp-relay:latest-alpine
+
+# Test bleeding edge
+docker run -d \
+  -p 1025:1025 \
+  -e AWS_REGION=eu-west-1 \
+  kamorion/aws-smtp-relay:edge
 ```
 
 ## Installation
 
-The `aws-smtp-relay` binary can be installed from source via
-[go install](https://golang.org/cmd/go/):
+### Pre-compiled Binaries
+
+Download pre-compiled binaries for your platform from [GitHub Releases](https://github.com/KamorionLabs/aws-smtp-relay/releases).
+
+Available platforms:
+- Linux (amd64, arm64, armv6, armv7)
+- Windows (amd64, arm64)
+- macOS (amd64, arm64)
+
+### From Source
+
+The `aws-smtp-relay` binary can be installed from source via [go install](https://golang.org/cmd/go/):
 
 ```sh
 go install github.com/KamorionLabs/aws-smtp-relay@latest
 ```
+
+### Docker
+
+See [Docker section](#docker) above for container images.
 
 ## Usage
 

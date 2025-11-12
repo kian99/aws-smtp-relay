@@ -1,0 +1,288 @@
+before:
+  hooks:
+    - go mod download
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    id: "aws-smtp-relay"
+    binary: aws-smtp-relay
+    main: ./
+    ldflags:
+      - -s -w -X main.Version={{.Version}} -X main.GitCommit={{.Commit}}
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "6"
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: darwin
+        goarch: arm
+
+archives:
+  - id: default
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE.txt
+      - README.md
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+
+dockers:
+  # ============================================
+  # Distroless images (production - default)
+  # ============================================
+
+  # AMD64 - Distroless
+  - image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-amd64"
+      - "kamorion/aws-smtp-relay:latest-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-amd64"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles"
+      - "--label=org.opencontainers.image.url=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
+    goarch: amd64
+
+  # ARM64 - Distroless
+  - image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-arm64v8"
+      - "kamorion/aws-smtp-relay:latest-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-arm64v8"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles"
+      - "--label=org.opencontainers.image.url=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
+    goarch: arm64
+
+  # ARMv7 - Distroless
+  - image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-armv7"
+      - "kamorion/aws-smtp-relay:latest-armv7"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-armv7"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-armv7"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles"
+      - "--label=org.opencontainers.image.url=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
+    goarch: arm
+    goarm: "7"
+
+  # ============================================
+  # Alpine images (debug - with shell)
+  # ============================================
+
+  # AMD64 - Alpine
+  - image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-alpine-amd64"
+      - "kamorion/aws-smtp-relay:latest-alpine-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine-amd64"
+    dockerfile: Dockerfile.alpine
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles (Alpine variant with shell)"
+      - "--label=org.opencontainers.image.url=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
+    goarch: amd64
+
+  # ARM64 - Alpine
+  - image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-alpine-arm64v8"
+      - "kamorion/aws-smtp-relay:latest-alpine-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine-arm64v8"
+    dockerfile: Dockerfile.alpine
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles (Alpine variant with shell)"
+      - "--label=org.opencontainers.image.url=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
+    goarch: arm64
+
+  # ARMv7 - Alpine
+  - image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-alpine-armv7"
+      - "kamorion/aws-smtp-relay:latest-alpine-armv7"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine-armv7"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine-armv7"
+    dockerfile: Dockerfile.alpine
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles (Alpine variant with shell)"
+      - "--label=org.opencontainers.image.url=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/KamorionLabs/{{ .ProjectName }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
+    goarch: arm
+    goarm: "7"
+
+docker_manifests:
+  # ============================================
+  # Distroless manifests (production)
+  # ============================================
+
+  # Docker Hub - Distroless
+  - name_template: "kamorion/aws-smtp-relay:{{ .Version }}"
+    image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-amd64"
+      - "kamorion/aws-smtp-relay:{{ .Version }}-arm64v8"
+      - "kamorion/aws-smtp-relay:{{ .Version }}-armv7"
+
+  - name_template: "kamorion/aws-smtp-relay:latest"
+    image_templates:
+      - "kamorion/aws-smtp-relay:latest-amd64"
+      - "kamorion/aws-smtp-relay:latest-arm64v8"
+      - "kamorion/aws-smtp-relay:latest-armv7"
+
+  # GHCR - Distroless
+  - name_template: "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-armv7"
+
+  - name_template: "ghcr.io/kamorionlabs/aws-smtp-relay:latest"
+    image_templates:
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-armv7"
+
+  # ============================================
+  # Alpine manifests (debug)
+  # ============================================
+
+  # Docker Hub - Alpine
+  - name_template: "kamorion/aws-smtp-relay:{{ .Version }}-alpine"
+    image_templates:
+      - "kamorion/aws-smtp-relay:{{ .Version }}-alpine-amd64"
+      - "kamorion/aws-smtp-relay:{{ .Version }}-alpine-arm64v8"
+      - "kamorion/aws-smtp-relay:{{ .Version }}-alpine-armv7"
+
+  - name_template: "kamorion/aws-smtp-relay:latest-alpine"
+    image_templates:
+      - "kamorion/aws-smtp-relay:latest-alpine-amd64"
+      - "kamorion/aws-smtp-relay:latest-alpine-arm64v8"
+      - "kamorion/aws-smtp-relay:latest-alpine-armv7"
+
+  # GHCR - Alpine
+  - name_template: "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine"
+    image_templates:
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine-armv7"
+
+  - name_template: "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine"
+    image_templates:
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine-amd64"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine-arm64v8"
+      - "ghcr.io/kamorionlabs/aws-smtp-relay:latest-alpine-armv7"
+
+release:
+  github:
+    owner: KamorionLabs
+    name: aws-smtp-relay
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## Release {{ .Version }}
+
+    **Full Changelog**: https://github.com/KamorionLabs/aws-smtp-relay/compare/{{ .PreviousTag }}...{{ .Tag }}
+  footer: |
+    ## Docker Images
+
+    Both Docker Hub and GitHub Container Registry are supported:
+
+    **Production (Distroless - recommended):**
+    ```bash
+    docker pull kamorion/aws-smtp-relay:{{ .Version }}
+    docker pull ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}
+    ```
+
+    **Debug (Alpine - with shell):**
+    ```bash
+    docker pull kamorion/aws-smtp-relay:{{ .Version }}-alpine
+    docker pull ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine
+    ```
+
+    **Binaries:**
+    Download pre-compiled binaries for your platform from the assets below.
