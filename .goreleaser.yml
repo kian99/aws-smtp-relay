@@ -74,10 +74,10 @@ dockers_v2:
     images:
       - "ghcr.io/kian99/aws-smtp-relay"
     tags:
-      - "{{ .Version }}"
       - "latest"
       - "v{{ .Major }}"
       - "v{{ .Major }}.{{ .Minor }}"
+      - "v{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
     dockerfile: Dockerfile
     labels:
       "org.opencontainers.image.title": "{{ .ProjectName }}"
@@ -96,10 +96,10 @@ dockers_v2:
     images:
       - "ghcr.io/kian99/aws-smtp-relay"
     tags:
-      - "{{ .Version }}-alpine"
       - "latest-alpine"
       - "v{{ .Major }}-alpine"
       - "v{{ .Major }}.{{ .Minor }}-alpine"
+      - "v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-alpine"
     dockerfile: Dockerfile.alpine
     labels:
       "org.opencontainers.image.title": "{{ .ProjectName }}"
