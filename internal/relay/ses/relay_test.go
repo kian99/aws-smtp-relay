@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/KamorionLabs/aws-smtp-relay/internal/relay"
 	"github.com/aws/aws-sdk-go-v2/service/sesv2"
+	"github.com/kian99/aws-smtp-relay/internal/relay"
 )
 
 var testData = struct {
@@ -76,11 +76,10 @@ func TestSend(t *testing.T) {
 	data := []byte{'T', 'E', 'S', 'T'}
 	setName := ""
 	input, out, err, _ := sendHelper(&origin, from, to, data, &setName, nil, nil, nil, nil)
-	if *input.FromEmailAddress != from {
+	if input.FromEmailAddress != nil {
 		t.Errorf(
-			"Unexpected source: %s. Expected: %s",
+			"Unexpected source: %s. Expected empty value",
 			*input.FromEmailAddress,
-			from,
 		)
 	}
 	if len(input.Destination.ToAddresses) != 1 {
@@ -205,11 +204,10 @@ func TestSendWithApiError(t *testing.T) {
 	setName := ""
 	apiErr := errors.New("API failure")
 	input, out, err, sendErr := sendHelper(&origin, from, to, data, &setName, nil, nil, nil, apiErr)
-	if *input.FromEmailAddress != from {
+	if input.FromEmailAddress != nil {
 		t.Errorf(
-			"Unexpected source: %s. Expected: %s",
+			"Unexpected source: %s. Expected empty value",
 			*input.FromEmailAddress,
-			from,
 		)
 	}
 	if len(input.Destination.ToAddresses) != 1 {
