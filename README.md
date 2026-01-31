@@ -4,41 +4,52 @@
 
 ## ⚠️ Fork Notice
 
-This repository is a maintained fork of [blueimp/aws-smtp-relay](https://github.com/blueimp/aws-smtp-relay), which appears to be inactive. This fork includes:
+This repository is a maintained fork of [KamorionLabs/aws-smtp-relay](https://github.com/KamorionLabs/aws-smtp-relay), which itself is a fork of [blueimp/aws-smtp-relay]((https://github.com/blueimp/aws-smtp-relay)). The Kamorion fork includes:
 
 - **Active maintenance** and support for pending pull requests
 - **Cross-account SES authorization** support via ARN parameters
 - **Multi-architecture Docker images** (amd64, arm64)
 - **Dual registry publishing** to Docker Hub and GitHub Container Registry
 
-Pull requests and contributions are welcome!
+The kian99 fork simply adds a fix for email headers.
+
+Pull requests and contributions should ideally go towards the Kamorion repo.
 
 **Contents**
 
-- [Background](#background)
-- [Docker](#docker)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Options](#options)
-  - [Authentication](#authentication)
-    - [User](#user)
-    - [IP](#ip)
-  - [TLS](#tls)
-  - [Filtering](#filtering)
-    - [Senders](#senders)
-    - [Recipients](#recipients)
-  - [Region](#region)
-  - [Credentials](#credentials)
-  - [Logging](#logging)
-- [Development](#development)
-  - [Build](#build)
-  - [Lint](#lint)
-  - [Test](#test)
-  - [Install](#install)
-  - [Uninstall](#uninstall)
-  - [Clean](#clean)
-- [Dependencies](#dependencies)
-- [License](#license)
+- [AWS SMTP Relay](#aws-smtp-relay)
+  - [⚠️ Fork Notice](#️-fork-notice)
+  - [Background](#background)
+  - [Docker](#docker)
+    - [Available Image Tags](#available-image-tags)
+    - [Quick Start](#quick-start)
+  - [Installation](#installation)
+    - [Pre-compiled Binaries](#pre-compiled-binaries)
+    - [From Source](#from-source)
+    - [Docker](#docker-1)
+  - [Usage](#usage)
+    - [Options](#options)
+    - [Authentication](#authentication)
+      - [User](#user)
+      - [IP](#ip)
+    - [TLS](#tls)
+    - [Filtering](#filtering)
+      - [Senders](#senders)
+      - [Recipients](#recipients)
+    - [Cross-Account Authorization](#cross-account-authorization)
+    - [SESv2 API ARN Mapping](#sesv2-api-arn-mapping)
+    - [Region](#region)
+    - [Credentials](#credentials)
+    - [Logging](#logging)
+  - [Development](#development)
+    - [Build](#build)
+    - [Lint](#lint)
+    - [Test](#test)
+    - [Install](#install)
+    - [Uninstall](#uninstall)
+    - [Clean](#clean)
+  - [Dependencies](#dependencies)
+  - [License](#license)
 
 ## Background
 
@@ -72,7 +83,7 @@ This repository provides [Dockerfile](Dockerfile) and [Dockerfile.alpine](Docker
 Prebuilt multi-architecture Docker images (amd64, arm64, armv7) are available on both registries:
 
 - **Docker Hub**: [kamorion/aws-smtp-relay](https://hub.docker.com/r/kamorion/aws-smtp-relay/)
-- **GitHub Container Registry**: `ghcr.io/kamorionlabs/aws-smtp-relay`
+- **GitHub Container Registry**: `ghcr.io/kian99/aws-smtp-relay`
 
 ### Available Image Tags
 
@@ -105,7 +116,7 @@ docker pull kamorion/aws-smtp-relay:edge-alpine     # Latest commit from main br
 ```
 
 **Notes:**
-- All tags are available on both Docker Hub (`kamorion/`) and GHCR (`ghcr.io/kamorionlabs/`)
+- All tags are available on GHCR (`ghcr.io/kian99/`)
 - `latest` tag = last stable release (tagged with `v*`)
 - `edge` tag = latest commit on main branch (bleeding edge, for testing)
 - Use **distroless** images for production (smaller, more secure)
@@ -137,7 +148,7 @@ docker run -d \
 
 ### Pre-compiled Binaries
 
-Download pre-compiled binaries for your platform from [GitHub Releases](https://github.com/KamorionLabs/aws-smtp-relay/releases).
+Download pre-compiled binaries for your platform from [GitHub Releases](https://github.com/kian99/aws-smtp-relay/releases).
 
 Available platforms:
 - Linux (amd64, arm64, armv6, armv7)
@@ -149,7 +160,7 @@ Available platforms:
 The `aws-smtp-relay` binary can be installed from source via [go install](https://golang.org/cmd/go/):
 
 ```sh
-go install github.com/KamorionLabs/aws-smtp-relay@latest
+go install github.com/kian99/aws-smtp-relay@latest
 ```
 
 ### Docker
@@ -415,7 +426,7 @@ to a `string` value:
 First, clone the project and then switch into its source directory:
 
 ```sh
-git clone https://github.com/KamorionLabs/aws-smtp-relay.git
+git clone https://github.com/kian99/aws-smtp-relay.git
 cd aws-smtp-relay
 ```
 

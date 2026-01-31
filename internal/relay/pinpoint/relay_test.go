@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/KamorionLabs/aws-smtp-relay/internal/relay"
 	"github.com/aws/aws-sdk-go-v2/service/pinpointemail"
+	"github.com/kian99/aws-smtp-relay/internal/relay"
 )
 
 var testData = struct {

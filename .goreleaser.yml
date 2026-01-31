@@ -72,8 +72,7 @@ dockers_v2:
   # ============================================
   - id: distroless
     images:
-      - "kamorion/aws-smtp-relay"
-      - "ghcr.io/kamorionlabs/aws-smtp-relay"
+      - "ghcr.io/kian99/aws-smtp-relay"
     tags:
       - "{{ .Version }}"
       - "latest"
@@ -83,8 +82,8 @@ dockers_v2:
     labels:
       "org.opencontainers.image.title": "{{ .ProjectName }}"
       "org.opencontainers.image.description": "SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles"
-      "org.opencontainers.image.url": "https://github.com/KamorionLabs/{{ .ProjectName }}"
-      "org.opencontainers.image.source": "https://github.com/KamorionLabs/{{ .ProjectName }}"
+      "org.opencontainers.image.url": "https://github.com/kian99/{{ .ProjectName }}"
+      "org.opencontainers.image.source": "https://github.com/kian99/{{ .ProjectName }}"
       "org.opencontainers.image.version": "{{ .Version }}"
       "org.opencontainers.image.created": "{{ time \"2006-01-02T15:04:05Z07:00\" }}"
       "org.opencontainers.image.revision": "{{ .FullCommit }}"
@@ -95,8 +94,7 @@ dockers_v2:
   # ============================================
   - id: alpine
     images:
-      - "kamorion/aws-smtp-relay"
-      - "ghcr.io/kamorionlabs/aws-smtp-relay"
+      - "ghcr.io/kian99/aws-smtp-relay"
     tags:
       - "{{ .Version }}-alpine"
       - "latest-alpine"
@@ -106,8 +104,8 @@ dockers_v2:
     labels:
       "org.opencontainers.image.title": "{{ .ProjectName }}"
       "org.opencontainers.image.description": "SMTP server to relay emails via Amazon SES or Pinpoint using IAM roles (Alpine variant with shell)"
-      "org.opencontainers.image.url": "https://github.com/KamorionLabs/{{ .ProjectName }}"
-      "org.opencontainers.image.source": "https://github.com/KamorionLabs/{{ .ProjectName }}"
+      "org.opencontainers.image.url": "https://github.com/kian99/{{ .ProjectName }}"
+      "org.opencontainers.image.source": "https://github.com/kian99/{{ .ProjectName }}"
       "org.opencontainers.image.version": "{{ .Version }}"
       "org.opencontainers.image.created": "{{ time \"2006-01-02T15:04:05Z07:00\" }}"
       "org.opencontainers.image.revision": "{{ .FullCommit }}"
@@ -115,7 +113,7 @@ dockers_v2:
 
 release:
   github:
-    owner: KamorionLabs
+    owner: kian99
     name: aws-smtp-relay
   draft: false
   prerelease: auto
@@ -123,7 +121,7 @@ release:
   header: |
     ## Release {{ .Version }}
 
-    **Full Changelog**: https://github.com/KamorionLabs/aws-smtp-relay/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: https://github.com/kian99/aws-smtp-relay/compare/{{ .PreviousTag }}...{{ .Tag }}
   footer: |
     ## Docker Images
 
@@ -131,14 +129,12 @@ release:
 
     **Production (Distroless - recommended):**
     ```bash
-    docker pull kamorion/aws-smtp-relay:{{ .Version }}
-    docker pull ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}
+    docker pull ghcr.io/kian99/aws-smtp-relay:{{ .Version }}
     ```
 
     **Debug (Alpine - with shell):**
     ```bash
-    docker pull kamorion/aws-smtp-relay:{{ .Version }}-alpine
-    docker pull ghcr.io/kamorionlabs/aws-smtp-relay:{{ .Version }}-alpine
+    docker pull ghcr.io/kian99/aws-smtp-relay:{{ .Version }}-alpine
     ```
 
     **Binaries:**

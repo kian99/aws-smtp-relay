@@ -4,16 +4,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
-	"strings"
 	"strconv"
-	"log"
+	"strings"
 
-	"github.com/KamorionLabs/aws-smtp-relay/internal/auth"
-	"github.com/KamorionLabs/aws-smtp-relay/internal/relay"
-	pinpointrelay "github.com/KamorionLabs/aws-smtp-relay/internal/relay/pinpoint"
-	sesrelay "github.com/KamorionLabs/aws-smtp-relay/internal/relay/ses"
+	"github.com/kian99/aws-smtp-relay/internal/auth"
+	"github.com/kian99/aws-smtp-relay/internal/relay"
+	pinpointrelay "github.com/kian99/aws-smtp-relay/internal/relay/pinpoint"
+	sesrelay "github.com/kian99/aws-smtp-relay/internal/relay/ses"
 	"github.com/mhale/smtpd"
 )
 
@@ -59,11 +59,11 @@ func server() (srv *smtpd.Server, err error) {
 	if LookupEnvOrString("ENABLE_LOGIN", "") == "true" {
 		authMechs["LOGIN"] = true
 	}
-	
+
 	version := LookupEnvOrString("GIT_REV", "")
 	if version == "" {
 		log.Printf("Listening on %v\r\n", *addr)
-	}else{
+	} else {
 		log.Printf("(Revision: %s) Listening on %v\r\n", version, *addr)
 	}
 	srv = &smtpd.Server{
@@ -165,7 +165,7 @@ func LookupEnvOrBool(key string, defaultVal bool) bool {
 		val = strings.ToLower(val)
 		if val == "true" {
 			return true
-		}else if val == "false" {
+		} else if val == "false" {
 			return false
 		}
 		log.Fatalf("LookupEnvOrBool[%s]: invalid value %v", key, val)

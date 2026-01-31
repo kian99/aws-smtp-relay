@@ -5,10 +5,10 @@ import (
 	"net"
 	"regexp"
 
-	"github.com/KamorionLabs/aws-smtp-relay/internal/relay"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sesv2"
 	sesv2types "github.com/aws/aws-sdk-go-v2/service/sesv2/types"
+	"github.com/kian99/aws-smtp-relay/internal/relay"
 )
 
 // SESEmailClient interface for testing

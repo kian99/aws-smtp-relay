@@ -165,10 +165,10 @@ docker run -d \
 
 ## 🔗 Links
 
-- **GitHub**: [KamorionLabs/aws-smtp-relay](https://github.com/KamorionLabs/aws-smtp-relay)
-- **GitHub Container Registry**: `ghcr.io/kamorionlabs/aws-smtp-relay`
-- **Documentation**: [Full README](https://github.com/KamorionLabs/aws-smtp-relay/blob/main/README.md)
-- **Issues**: [Report a bug](https://github.com/KamorionLabs/aws-smtp-relay/issues)
+- **GitHub**: [kian99/aws-smtp-relay](https://github.com/kian99/aws-smtp-relay)
+- **GitHub Container Registry**: `ghcr.io/kian99/aws-smtp-relay`
+- **Documentation**: [Full README](https://github.com/kian99/aws-smtp-relay/blob/main/README.md)
+- **Issues**: [Report a bug](https://github.com/kian99/aws-smtp-relay/issues)
 
 ## 🤝 Fork Notice
 
@@ -182,4 +182,4 @@ Pull requests and contributions welcome!
 
 ## 📝 License
 
-Released under the [MIT license](https://github.com/KamorionLabs/aws-smtp-relay/blob/main/LICENSE.txt).
+Released under the [MIT license](https://github.com/kian99/aws-smtp-relay/blob/main/LICENSE.txt).
