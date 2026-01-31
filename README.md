@@ -82,7 +82,6 @@ This repository provides [Dockerfile](Dockerfile) and [Dockerfile.alpine](Docker
 
 Prebuilt multi-architecture Docker images (amd64, arm64, armv7) are available on both registries:
 
-- **Docker Hub**: [kamorion/aws-smtp-relay](https://hub.docker.com/r/kamorion/aws-smtp-relay/)
 - **GitHub Container Registry**: `ghcr.io/kian99/aws-smtp-relay`
 
 ### Available Image Tags
@@ -93,13 +92,13 @@ Minimal, secure images based on Google's Distroless base (no shell, no package m
 
 ```sh
 # Stable releases
-docker pull kamorion/aws-smtp-relay:latest          # Latest stable release
-docker pull kamorion/aws-smtp-relay:v1.2.3          # Specific version
-docker pull kamorion/aws-smtp-relay:v1.2            # Latest patch of v1.2
-docker pull kamorion/aws-smtp-relay:v1              # Latest minor of v1
+docker pull ghcr.io/kian99/aws-smtp-relay:latest          # Latest stable release
+docker pull ghcr.io/kian99/aws-smtp-relay:v1.2.3          # Specific version
+docker pull ghcr.io/kian99/aws-smtp-relay:v1.2            # Latest patch of v1.2
+docker pull ghcr.io/kian99/aws-smtp-relay:v1              # Latest minor of v1
 
 # Development (from main branch)
-docker pull kamorion/aws-smtp-relay:edge            # Latest commit from main branch
+docker pull ghcr.io/kian99/aws-smtp-relay:edge            # Latest commit from main branch
 ```
 
 **Debug (Alpine - With Shell)**
@@ -108,11 +107,11 @@ Images based on Alpine Linux, includes shell and basic debugging tools:
 
 ```sh
 # Stable releases
-docker pull kamorion/aws-smtp-relay:latest-alpine   # Latest stable release
-docker pull kamorion/aws-smtp-relay:v1.2.3-alpine   # Specific version
+docker pull ghcr.io/kian99/aws-smtp-relay:latest-alpine   # Latest stable release
+docker pull ghcr.io/kian99/aws-smtp-relay:v1.2.3-alpine   # Specific version
 
 # Development (from main branch)
-docker pull kamorion/aws-smtp-relay:edge-alpine     # Latest commit from main branch
+docker pull ghcr.io/kian99/aws-smtp-relay:edge-alpine     # Latest commit from main branch
 ```
 
 **Notes:**
@@ -129,19 +128,13 @@ docker pull kamorion/aws-smtp-relay:edge-alpine     # Latest commit from main br
 docker run -d \
   -p 1025:1025 \
   -e AWS_REGION=eu-west-1 \
-  kamorion/aws-smtp-relay:latest
+  ghcr.io/kian99/aws-smtp-relay:latest
 
 # Debug with shell access
 docker run -d \
   -p 1025:1025 \
   -e AWS_REGION=eu-west-1 \
-  kamorion/aws-smtp-relay:latest-alpine
-
-# Test bleeding edge
-docker run -d \
-  -p 1025:1025 \
-  -e AWS_REGION=eu-west-1 \
-  kamorion/aws-smtp-relay:edge
+  ghcr.io/kian99/aws-smtp-relay:latest-alpine
 ```
 
 ## Installation
